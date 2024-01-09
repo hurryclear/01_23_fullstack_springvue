@@ -88,16 +88,54 @@
       </el-header>
 
       <el-main>
-        <el-table :data="tableData">
+
+        <el-breadcrumb separator="/">
+          <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
+          <el-breadcrumb-item><a href="/">promotion management</a></el-breadcrumb-item>
+        </el-breadcrumb>
+
+<!--        搜索栏-->
+        <div style="margin: 10px 0">
+          <el-input style="width: 200px" placeholder="Enter the name" suffix-icon="el-icon-search"></el-input>
+          <el-input style="width: 200px; margin-left: 5px" placeholder="Enter the address" suffix-icon="el-icon-position"></el-input>
+          <el-input style="width: 200px; margin-left: 5px" placeholder="Enter the email" suffix-icon="el-icon-message"></el-input>
+          <el-button style="margin-left: 5px" type="primary">search</el-button>
+        </div>
+<!--        add-->
+        <div style="margin: 10px 0">
+          <el-button type ="primary">add<i class="el-icon-plus" style="margin-left: 5px"></i></el-button>
+          <el-button type ="primary">delete<i class="el-icon-minus" style="margin-left: 2px"></i></el-button>
+          <el-button type ="primary">output<i class="el-icon-bottom" style="margin-left: 5px"></i></el-button>
+          <el-button type ="primary">input<i class="el-icon-top" style="margin-left: 5px"></i></el-button>
+        </div>
+
+        <el-table :data="tableData" border stripe :header-cell-class-name="headerBg">
           <el-table-column prop="date" label="Date" width="140">
           </el-table-column>
           <el-table-column prop="name" label="Name" width="120">
           </el-table-column>
           <el-table-column prop="address" label="Address">
           </el-table-column>
+          <el-table-column label="Process">
+            <template slot-scope="scope">
+              <el-button type="success">edit <i class="el-icon-edit"></i></el-button>
+              <el-button type="danger">edit <i class="el-icon-remove"></i></el-button>
+            </template>
+          </el-table-column>
         </el-table>
-      </el-main>
 
+        <div style="padding: 10px 0">
+          <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page.sync="currentPage4"
+              :page-sizes="[5, 10, 15, 20]"
+              :page-size="10"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="400">
+          </el-pagination>
+        </div>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -142,3 +180,8 @@ export default {
 }
 </script>
 
+<style>
+.headerBg {
+  background: #746f6f !important;
+}
+</style>
