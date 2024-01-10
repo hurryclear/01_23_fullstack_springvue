@@ -21,6 +21,7 @@ public class UserController {
     private UserService userService;
 
 
+    // save: insert(new) and update(old)
     @PostMapping //前后端的接口
     // save: add or update. How can I use one method 'sava' to add user or update user? UserService
     // the return data is Integer, what does that mean?
@@ -30,9 +31,16 @@ public class UserController {
     }
 
 
+    // find all data
     // get mapping (get user in database)
     @GetMapping // localhost:9090, if here have /, then at then end of url also need /
     public List<User> index() {
         return userMapper.findALL();
+    }
+
+    //delete
+    @DeleteMapping("/{id}") // this id must be same with variable id below
+    public Integer delete(@PathVariable Integer id) { //@PathVariable:
+        return userMapper.deleteById(id);
     }
 }

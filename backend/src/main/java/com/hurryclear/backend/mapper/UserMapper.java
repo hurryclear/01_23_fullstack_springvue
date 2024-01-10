@@ -1,12 +1,11 @@
 package com.hurryclear.backend.mapper;
 
 import com.hurryclear.backend.entity.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
+// from mybatis
 
 @Mapper
 public interface UserMapper {
@@ -26,4 +25,7 @@ public interface UserMapper {
     // it is actually you define another "annotation" in User.xml
 //    @Update("UPDATE sys_user SET username=#{username}, password=#{password}, nickname=#{nickname}, email=#{email}, phone=#{phone}, address=#{address} WHERE id = #{id}")
     int update(User user);
+
+    @Delete("DELETE FROM sys_user WHERE id=#{id}")
+    Integer deleteById(@Param("id") Integer id); // @Param("id") id must be same with id in #{id}
 }
