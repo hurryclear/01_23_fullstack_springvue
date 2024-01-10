@@ -7,3 +7,10 @@ spring:
     url: jdbc:mysql://localhost:3306/springvue
     username: root
     password: 12345678
+#  this is a file which you define it, but springboot doesn't know
+#  you have to tell springboot what is this
+#  config in application.yml
+mybatis:
+  mapper-locations: classpath:mapper/*.xml #scan all mybatis xml file
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #get the log of SQL
