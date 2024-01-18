@@ -249,3 +249,140 @@ This file will not be recognized by Spring Boot unless you "tell" Spring Boot. H
 mybatis:
   mapper-locations: classpath:mapper/*.xml #scan all mybatis xml file
 ```
+
+### Pagination 
+
+<img src="DReadMe.assets/image-20240118184317706.png" alt="image-20240118184317706" style="zoom:50%;" />
+
+#### In UserController:
+
+![image-20240118184819830](DReadMe.assets/image-20240118184819830.png)
+
+#### In UserMapper
+
+![image-20240118184753406](DReadMe.assets/image-20240118184753406.png)
+
+#### In HomeView.vue
+
+- In the search box must bind with v-model="username", so you can enter in the certain box, here is "Enter the name"
+
+- When you enter a "username", it need to be passed to load function, so "backend" will know what data you are looking for.. For this reason, you need have @click="load" in the button search
+
+```vue
+<!--        search box-->
+        <div style="margin: 10px 0">
+          <el-input style="width: 200px" placeholder="Enter the name" suffix-icon="el-icon-search" v-model="username"></el-input>
+          <el-input style="width: 200px; margin-left: 5px" placeholder="Enter the address" suffix-icon="el-icon-position"></el-input>
+          <el-input style="width: 200px; margin-left: 5px" placeholder="Enter the email" suffix-icon="el-icon-message"></el-input>
+          <el-button style="margin-left: 5px" type="primary" @click="load">search</el-button>
+        </div>
+```
+
+- add parameter in data, load in created, fetch in load (not yet really understand, cause have not learned frontend, just "copy")
+  - handleSizeChange ?
+  - handleCurrentChange ?
+
+```vue
+export default {
+	data () {
+
+    return {
+      tableData: [],
+      total: 0,
+      pageNum: 1,
+      pageSize: 2,
+      username: "",
+      collapseBtnClass: 'el-icon-s-fold',
+      isCollapsed: false,
+      sideWidth: 200,
+      logoTextShow : true
+    }
+	},
+created() {
+    //request page finding
+    this.load()
+  },
+  methods: {
+    
+    load() {
+      fetch("http://localhost:9090/user/page?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&username=" + this.username).then(res => res.json()).then( res=> {
+        console.log(res)
+        this.tableData = res.data
+        this.total = res.total
+      })
+    },
+    handleSizeChange(pageSize) {
+      console.log(pageSize)
+      this.pageSize = pageSize
+      this.load()
+    },
+    handleCurrentChange(pageNum) {
+      console.log(pageNum)
+      this.pageNum = pageNum
+      this.load()
+    }
+  }
+}
+```
+
+
+
+### Springboot cross port
+
+add CorsConfig class in config package
+
+```java
+package com.hurryclear.backend.config;
+
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+@Configuration
+public class CorsConfig {
+
+    private static final long MAC_AGE = 24 * 60 * 60;
+
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedOrigin("http://localhost:8080");
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.setMaxAge(MAC_AGE);
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return new CorsFilter(source);
+    }
+}
+```
+
+enable frontend vue visit backend port
+
+# Spring Boot Data JPA
+
+[图灵讲解：底层原理](https://www.bilibili.com/video/BV1NP4y1z7Lo?p=6&spm_id_from=pageDriver&vd_source=5700f6f960dc64a5c17cbedf10fb3a37)
+
+将不同的数据存储统一
+
+ORM(Object, Relation, Mapping): Table --> Class
+
+# Docker
+
+[Explain from Dan Vege: connect and pgAdmin](https://www.youtube.com/watch?v=XDlgWyVfSMA)
+
+connect postgres which in docker`docker exec -it postgres-database psql -U dev -d db_dev`
+
+if you are not sure if there exists "dev" user then list all user`docker exec -it postgres-database psql -U postgres -c "\du"`
+
+if there is no "dev" user then create new `docker exec -it postgres-database psql -U postgres -c "CREATE ROLE dev WITH LOGIN PASSWORD 'dev_pw' CREATEDB;"`
+
+## Postgres
+
+quit `\q`
+
+connect `\c`
+
