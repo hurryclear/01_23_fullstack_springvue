@@ -94,12 +94,12 @@
           <el-breadcrumb-item><a href="/">promotion management</a></el-breadcrumb-item>
         </el-breadcrumb>
 
-<!--        搜索栏-->
+<!--        search box-->
         <div style="margin: 10px 0">
-          <el-input style="width: 200px" placeholder="Enter the name" suffix-icon="el-icon-search"></el-input>
+          <el-input style="width: 200px" placeholder="Enter the name" suffix-icon="el-icon-search" v-model="username"></el-input>
           <el-input style="width: 200px; margin-left: 5px" placeholder="Enter the address" suffix-icon="el-icon-position"></el-input>
           <el-input style="width: 200px; margin-left: 5px" placeholder="Enter the email" suffix-icon="el-icon-message"></el-input>
-          <el-button style="margin-left: 5px" type="primary">search</el-button>
+          <el-button style="margin-left: 5px" type="primary" @click="load">search</el-button>
         </div>
 <!--        add-->
         <div style="margin: 10px 0">
@@ -110,12 +110,12 @@
         </div>
 
         <el-table :data="tableData" border stripe :header-cell-class-name="headerBg">
-          <el-table-column prop="date" label="Date" width="140">
-          </el-table-column>
-          <el-table-column prop="name" label="Name" width="120">
-          </el-table-column>
-          <el-table-column prop="address" label="Address">
-          </el-table-column>
+          <el-table-column prop="id" label="Id" width="80"></el-table-column>
+          <el-table-column prop="username" label="Username" width="220"></el-table-column>
+          <el-table-column prop="nickname" label="Nickname" width="220"></el-table-column>
+          <el-table-column prop="phone" label="Phone"></el-table-column>
+          <el-table-column prop="email" label="Email" width="200"></el-table-column>
+          <el-table-column prop="address" label="Address"></el-table-column>
           <el-table-column label="Process">
             <template slot-scope="scope">
               <el-button type="success">edit <i class="el-icon-edit"></i></el-button>
@@ -129,10 +129,11 @@
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page.sync="currentPage4"
-              :page-sizes="[5, 10, 15, 20]"
-              :page-size="10"
+              :current-page="pageNum"
+              :page-sizes="[2, 5, 10, 20]"
+              :page-size="pageSize"
               layout="total, sizes, prev, pager, next, jumper"
-              :total="400">
+              :total="total">
           </el-pagination>
         </div>
       </el-main>
@@ -150,18 +151,22 @@ export default {
     HelloWorld
   },
   data () {
-    const item = {
-      date: '2016-05-02',
-      name: 'Tom',
-      address: 'No. 189, Grove St, Los Angeles'
-    };
+
     return {
-      tableData: Array(10).fill(item),
+      tableData: [],
+      total: 0,
+      pageNum: 1,
+      pageSize: 2,
+      username: "",
       collapseBtnClass: 'el-icon-s-fold',
       isCollapsed: false,
       sideWidth: 200,
       logoTextShow : true
     }
+  },
+  created() {
+    //request page finding
+    this.load()
   },
   methods: {
     collapse() { //点击收缩按钮就会触发
@@ -175,6 +180,23 @@ export default {
         this.collapseBtnClass = 'el-icon-s-fold'
         this.logoTextShow = true
       }
+    },
+    load() {
+      fetch("http://localhost:9090/user/page?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&username=" + this.username).then(res => res.json()).then( res=> {
+        console.log(res)
+        this.tableData = res.data
+        this.total = res.total
+      })
+    },
+    handleSizeChange(pageSize) {
+      console.log(pageSize)
+      this.pageSize = pageSize
+      this.load()
+    },
+    handleCurrentChange(pageNum) {
+      console.log(pageNum)
+      this.pageNum = pageNum
+      this.load()
     }
   }
 }
